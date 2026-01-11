@@ -1,86 +1,98 @@
 package com.ooo.drug
-
 import android.content.Context
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.FlexWrap
+
 
 class SearchActivity : AppCompatActivity() {
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+        lateinit var adapter: SearchKeywordAdapter
+
+
 
         val emptyMessage = findViewById<View>(R.id.emptyBox)
-        val recentChipGroup = findViewById<ChipGroup>(R.id.recentChipGroup)
         val searchInput = findViewById<EditText>(R.id.searchInput)
+        val searchButton = findViewById<ImageView>(R.id.searchButton)
         val backIcon = findViewById<ImageView>(R.id.backIcon)
+        val recyclerView = findViewById<RecyclerView>(R.id.recentRecyclerView)
 
-        // 🔙 뒤로가기
+
+// 🔙 뒤로가기
         backIcon.setOnClickListener {
             finish()
         }
 
-        // ⌨️ 200ms 후 키보드 자동 표시
-        searchInput.postDelayed({
+
+// ⌨️ 키보드 자동 표시
+        Handler(Looper.getMainLooper()).postDelayed({
             searchInput.requestFocus()
             searchInput.setSelection(searchInput.text.length)
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.showSoftInput(searchInput, InputMethodManager.SHOW_IMPLICIT)
         }, 300)
 
-        // 📌 SharedPreferences에서 검색기록 불러오기
+
+// 입력 상태에 따라 아이콘 변경
+        searchInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                searchButton.setImageResource(
+                    if (!s.isNullOrBlank()) R.drawable.search_bt_black else R.drawable.search_bt
+                )
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+
+// 최근 검색어 불러오기
         val recentKeywords = loadKeywords().toMutableList()
 
+
         if (recentKeywords.isEmpty()) {
+            recyclerView.visibility = View.GONE
             emptyMessage.visibility = View.VISIBLE
-            recentChipGroup.visibility = View.GONE
         } else {
+            recyclerView.visibility = View.VISIBLE
             emptyMessage.visibility = View.GONE
-            recentChipGroup.visibility = View.VISIBLE
 
-            recentKeywords.forEach { keyword ->
-                val chip = Chip(this).apply {
-                    text = keyword
-                    isCloseIconVisible = true
-                    textSize = 13f
 
-                    setTextColor(Color.parseColor("#333333"))
-                    closeIconTint = ColorStateList.valueOf(Color.parseColor("#999999"))
-                    chipBackgroundColor = ColorStateList.valueOf(Color.parseColor("#F4F3F3"))
-                    chipStrokeWidth = 0f
+            val adapter = SearchKeywordAdapter(recentKeywords) { removedKeyword ->
+                recentKeywords.remove(removedKeyword)
+                saveKeywordList(recentKeywords)
+                adapter.notifyDataSetChanged()
 
-                    setOnCloseIconClickListener {
-                        recentChipGroup.removeView(this)
 
-                        // 삭제 후 저장
-                        recentKeywords.remove(keyword)
-                        saveKeywordList(recentKeywords)
-
-                        if (recentKeywords.isEmpty()) {
-                            recentChipGroup.visibility = View.GONE
-                            emptyMessage.visibility = View.VISIBLE
-                        }
-                    }
+                if (recentKeywords.isEmpty()) {
+                    recyclerView.visibility = View.GONE
+                    emptyMessage.visibility = View.VISIBLE
                 }
-
-                recentChipGroup.addView(chip)
             }
+
+
+            recyclerView.layoutManager = FlexboxLayoutManager(this).apply {
+                flexDirection = FlexDirection.ROW
+                flexWrap = FlexWrap.WRAP
+            }
+            recyclerView.adapter = adapter
         }
     }
 
-    // ================================
-    //      검색기록 저장 / 불러오기
-    // ================================
 
     private fun loadKeywords(): List<String> {
         val prefs = getSharedPreferences("search_prefs", MODE_PRIVATE)
@@ -88,21 +100,6 @@ class SearchActivity : AppCompatActivity() {
         return keywords.toList()
     }
 
-    private fun saveKeyword(newKeyword: String) {
-        val prefs = getSharedPreferences("search_prefs", MODE_PRIVATE)
-        val existing = prefs.getStringSet("recent_keywords", emptySet())?.toMutableList() ?: mutableListOf()
-
-        // 중복 제거하고 최신 순 정렬
-        existing.remove(newKeyword)
-        existing.add(0, newKeyword)
-
-        // 최대 5개까지만 유지
-        if (existing.size > 5) {
-            existing.subList(5, existing.size).clear()
-        }
-
-        prefs.edit().putStringSet("recent_keywords", existing.toSet()).apply()
-    }
 
     private fun saveKeywordList(list: List<String>) {
         val prefs = getSharedPreferences("search_prefs", MODE_PRIVATE)

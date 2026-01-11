@@ -22,7 +22,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-
     <!-- 최근 검색어 제목 -->
     <TextView
         android:id="@+id/recentLabel"
@@ -61,23 +60,16 @@
             android:textSize="14sp"/>
     </androidx.cardview.widget.CardView>
 
-    <!-- 최근 검색어 ChipGroup -->
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/recentChipGroup"
+    <!-- 최근 검색어 RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recentRecyclerView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:visibility="gone"
-        android:padding="4dp"
         app:layout_constraintTop_toBottomOf="@id/recentLabel"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:singleLine="false"
-        app:chipSpacing="8dp"
-        app:lineSpacing="8dp" />
-
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- 카테고리 제목 예시 -->
     <TextView
@@ -90,7 +82,7 @@
         android:layout_marginTop="24dp"
         android:layout_marginStart="16dp"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/recentChipGroup"
+        app:layout_constraintTop_toBottomOf="@id/recentRecyclerView"
         app:layout_constraintStart_toStartOf="parent" />
 
     <!-- 약 리스트 컨테이너 (LinearLayout 내부에 동적 추가 예정) -->
@@ -107,7 +99,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- 하단 검색창 (공통) -->
+    <!-- 하단 검색창 -->
     <androidx.cardview.widget.CardView
         android:id="@+id/searchBar"
         android:layout_width="328dp"
@@ -141,7 +133,6 @@
                 android:focusable="true"
                 android:focusableInTouchMode="true" />
 
-
             <ImageView
                 android:id="@+id/searchButton"
                 android:layout_width="30dp"
@@ -150,4 +141,5 @@
                 android:contentDescription="검색 아이콘" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
