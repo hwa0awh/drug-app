@@ -106,4 +106,21 @@ class SearchActivity : AppCompatActivity() {
         val trimmed = if (list.size > 5) list.subList(0, 5) else list
         prefs.edit().putStringSet("recent_keywords", trimmed.toSet()).apply()
     }
+
+    private fun showSearchLimitDialog() { // 검색 최대
+        val dialogView = layoutInflater.inflate(R.layout.search_limit, null)
+
+        val dialog = android.app.AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogView.findViewById<View>(R.id.confirmButton).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
 }
