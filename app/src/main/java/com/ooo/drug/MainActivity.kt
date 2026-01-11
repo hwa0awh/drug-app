@@ -47,5 +47,12 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, SearchActivity::class.java)
             startActivity(intent)
         }
+
+        val searchEditText = findViewById<EditText>(R.id.searchEditText)
+        searchEditText.setOnClickListener {
+            val intent = Intent(this, SearchActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 }

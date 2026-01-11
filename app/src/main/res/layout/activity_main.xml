@@ -69,7 +69,9 @@
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
                 android:hint="약 검색하고 알아보기"
-                android:inputType="text"
+                android:inputType="none"
+                android:focusable="false"
+                android:clickable="false"
                 android:textSize="14sp" />
 
             <ImageView

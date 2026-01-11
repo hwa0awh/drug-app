@@ -16,8 +16,12 @@
         android:contentDescription="뒤로가기"
         android:layout_marginStart="40dp"
         android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 
     <!-- 최근 검색어 제목 -->
     <TextView
@@ -66,13 +70,14 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:visibility="gone"
-        app:BackgroundColor="#F4F3F3"
+        android:padding="4dp"
         app:layout_constraintTop_toBottomOf="@id/recentLabel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:singleLine="false"
         app:chipSpacing="8dp"
         app:lineSpacing="8dp" />
+
 
     <!-- 카테고리 제목 예시 -->
     <TextView
@@ -132,7 +137,10 @@
                 android:textSize="14sp"
                 android:hint="약을 검색해보세요"
                 android:background="@android:color/transparent"
-                android:inputType="text" />
+                android:inputType="text|textAutoCorrect"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
+
 
             <ImageView
                 android:id="@+id/searchButton"
